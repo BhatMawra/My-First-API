@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WebApplication1;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace WebApplication1.Controllers
+namespace ASPCoreWebApi.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private static List<User> users = new List<User>();
-        
+
 
         // GET: api/<UserController>
         [HttpGet]
@@ -29,9 +28,26 @@ namespace WebApplication1.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] User request)
+        [ProducesResponseType(typeof(User), 201)]
+        [ProducesResponseType(typeof(Error), 400)]
+        public IActionResult Post([FromBody] UserRequest request)
         {
-            users.Add(request);
+            if (string.IsNullOrEmpty(request.Name))
+            {
+                Error error = new Error();
+                error.Message = "The name field is required";
+                return BadRequest(error);
+            }
+
+            User user = new User();
+            user.Email = request.Email;
+            user.Name = request.Name;
+            user.Job = request.Job;
+            user.Id = users.Count() + 1;
+
+            users.Add(user);
+
+            return CreatedAtAction("Get" , new { id = user.Id } , user);
         }
 
         // PUT api/<UserController>/5
@@ -41,7 +57,7 @@ namespace WebApplication1.Controllers
             var user = users.FirstOrDefault(x => x.Id == id);
             if (user == null)
             {
-                return NotFound();           
+                return NotFound();
             }
             else
             {

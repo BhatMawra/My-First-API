@@ -4,13 +4,13 @@
 
 namespace WebApplication1.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class StudentController : ControllerBase
     {
         private static List<Student> students = new List<Student>();
-        
+
 
         // GET: api/<UserController>
         [HttpGet]
@@ -41,7 +41,7 @@ namespace WebApplication1.Controllers
             var student = students.FirstOrDefault(x => x.Id == id);
             if (student == null)
             {
-                return NotFound();           
+                return NotFound();
             }
             else
             {
